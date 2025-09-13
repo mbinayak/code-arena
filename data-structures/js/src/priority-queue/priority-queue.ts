@@ -106,6 +106,7 @@ export default class PriorityQueue<T> {
     }
   }
 
+  // heapify method take in an initial array and converts it into a heap, and sort it in place
   private heapify() {
     for (let i = this.size - 1; i > 0; i--) {
       this.bubbleUp(i);
