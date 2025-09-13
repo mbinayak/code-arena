@@ -1,18 +1,24 @@
 type Comparator<T> = (ele1: T, ele2: T) => boolean;
 
 export default class PriorityQueue<T> {
-  private heap: T[] = [];
+  private heap: T[];
   private readonly heapComplianceComparator: Comparator<T>;
 
-  constructor(params?: { maxHeap?: boolean; comparator?: Comparator<T> }) {
+  constructor(params?: {
+    list?: T[];
+    maxHeap?: boolean;
+    comparator?: Comparator<T>;
+  }) {
+    this.heap = params?.list?.length ? params.list : [];
     if (params?.comparator) {
       this.heapComplianceComparator = params.comparator;
-      return;
+    } else {
+      this.heapComplianceComparator = params?.maxHeap
+        ? this.maxComparator
+        : this.minComparator;
     }
 
-    this.heapComplianceComparator = params?.maxHeap
-      ? this.maxComparator
-      : this.minComparator;
+    this.heapify();
   }
 
   add(ele: T) {
@@ -44,8 +50,8 @@ export default class PriorityQueue<T> {
     return this.heap.length;
   }
 
-  private bubbleUp() {
-    let eleId = this.size - 1;
+  private bubbleUp(startId?: number) {
+    let eleId = startId ?? this.size - 1;
     while (eleId > 0) {
       const parentId = this.getParentId(eleId) as number;
       const eleVal = this.heap[eleId] as T,
@@ -97,6 +103,12 @@ export default class PriorityQueue<T> {
       this.heap[swapId] = eleVal;
       this.heap[eleId] = swapVal;
       eleId = swapId;
+    }
+  }
+
+  private heapify() {
+    for (let i = this.size - 1; i > 0; i--) {
+      this.bubbleUp(i);
     }
   }
 
