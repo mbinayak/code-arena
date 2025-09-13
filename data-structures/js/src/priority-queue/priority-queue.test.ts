@@ -1,13 +1,33 @@
 import PriorityQueue from "./priority-queue.ts";
 
+interface Person {
+  name: string;
+  age: number;
+}
+
 describe("Priority Queue", () => {
   describe("Min Priority Queue", () => {
-    const pqueue = new PriorityQueue<number>();
+    let pqueue: PriorityQueue<number>;
+    beforeEach(() => {
+      pqueue = new PriorityQueue<number>();
+    });
+
     describe("Base Functionality", () => {
       test("Empty Operations", () => {
         expect(pqueue.size).toBe(0);
         expect(pqueue.top).toBeUndefined();
         expect(pqueue.remove()).toBeUndefined();
+        expect(pqueue.top).toBeUndefined();
+      });
+
+      test("Single Element roundtrip", () => {
+        expect(pqueue.size).toBe(0);
+        expect(pqueue.top).toBeUndefined();
+        pqueue.add(45);
+        expect(pqueue.top).toBe(45);
+        expect(pqueue.size).toBe(1);
+        expect(pqueue.remove()).toBe(45);
+        expect(pqueue.size).toBe(0);
         expect(pqueue.top).toBeUndefined();
       });
 
@@ -33,12 +53,27 @@ describe("Priority Queue", () => {
   });
 
   describe("Max Priority Queue", () => {
-    const pqueue = new PriorityQueue<number>({ maxHeap: true });
+    let pqueue: PriorityQueue<number>;
+    beforeEach(() => {
+      pqueue = new PriorityQueue<number>({ maxHeap: true });
+    });
+
     describe("Base Functionality", () => {
       test("Empty Operations", () => {
         expect(pqueue.size).toBe(0);
         expect(pqueue.top).toBeUndefined();
         expect(pqueue.remove()).toBeUndefined();
+        expect(pqueue.top).toBeUndefined();
+      });
+
+      test("Single Element roundtrip", () => {
+        expect(pqueue.size).toBe(0);
+        expect(pqueue.top).toBeUndefined();
+        pqueue.add(45);
+        expect(pqueue.top).toBe(45);
+        expect(pqueue.size).toBe(1);
+        expect(pqueue.remove()).toBe(45);
+        expect(pqueue.size).toBe(0);
         expect(pqueue.top).toBeUndefined();
       });
 
@@ -64,10 +99,15 @@ describe("Priority Queue", () => {
   });
 
   describe("Custom Comparator Priority Queue", () => {
-    interface Person {
-      name: string;
-      age: number;
-    }
+    let pqueue: PriorityQueue<Person>;
+    beforeEach(() => {
+      pqueue = new PriorityQueue<Person>({
+        comparator: (a: Person, b: Person) => {
+          return a.age > b.age; // so we expect the order to be older first.
+        },
+      });
+    });
+
     const people: Person[] = [
       { name: "n1", age: 32 },
       { name: "n2", age: 52 },
@@ -91,16 +131,30 @@ describe("Priority Queue", () => {
     ];
     const peopleSize = people.length;
 
-    const pqueue = new PriorityQueue<Person>({
-      comparator: (a: Person, b: Person) => {
-        return a.age > b.age; // so we expect the order to be older first.
-      },
-    });
-
     test("Empty Operations", () => {
       expect(pqueue.size).toBe(0);
       expect(pqueue.top).toBeUndefined();
       expect(pqueue.remove()).toBeUndefined();
+      expect(pqueue.top).toBeUndefined();
+    });
+
+    test("Single Element roundtrip", () => {
+      expect(pqueue.size).toBe(0);
+      expect(pqueue.top).toBeUndefined();
+      pqueue.add({
+        name: "bn",
+        age: 47,
+      });
+      expect(pqueue.top).toEqual({
+        name: "bn",
+        age: 47,
+      });
+      expect(pqueue.size).toBe(1);
+      expect(pqueue.remove()).toEqual({
+        name: "bn",
+        age: 47,
+      });
+      expect(pqueue.size).toBe(0);
       expect(pqueue.top).toBeUndefined();
     });
 
