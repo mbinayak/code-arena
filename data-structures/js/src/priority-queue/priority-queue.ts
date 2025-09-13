@@ -1,15 +1,22 @@
-type Comparator<T> = (ele1: T, ele2: T) => boolean;
+export type Comparator<T> = (ele1: T, ele2: T) => boolean;
 
 export default class PriorityQueue<T> {
   private heap: T[];
   private readonly heapComplianceComparator: Comparator<T>;
 
+  /**
+   *
+   * @param params - list: initial list to heapify
+   * maxHeap: boolean - whether to create a max heap or min heap. Default is min heap
+   * comparator: custom comparator function to determine heap property. If provided, it overrides maxHeap param
+   * If both comparator and maxHeap are not provided, minHeap is created by default
+   */
   constructor(params?: {
     list?: T[];
     maxHeap?: boolean;
     comparator?: Comparator<T>;
   }) {
-    this.heap = params?.list?.length ? params.list : [];
+    this.heap = params?.list ?? [];
     if (params?.comparator) {
       this.heapComplianceComparator = params.comparator;
     } else {
@@ -21,11 +28,13 @@ export default class PriorityQueue<T> {
     this.heapify();
   }
 
+  // adds an element to the priority queue
   add(ele: T) {
     this.heap.push(ele);
     this.bubbleUp();
   }
 
+  // removes and returns the top element of the priority queue
   remove(): T | undefined {
     if (this.size === 0) {
       return;
@@ -106,7 +115,7 @@ export default class PriorityQueue<T> {
     }
   }
 
-  // heapify method take in an initial array and converts it into a heap, and sort it in place
+  // heapify method take in an initial array and converts it into a heap
   private heapify() {
     for (let i = this.size - 1; i > 0; i--) {
       this.bubbleUp(i);
