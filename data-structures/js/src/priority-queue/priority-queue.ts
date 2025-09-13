@@ -1,20 +1,21 @@
 type Comparator<T> = (ele1: T, ele2: T) => boolean;
 
 export default class PriorityQueue<T> {
-  heap: T[] = [];
-  comparator: Comparator<T>;
+  private heap: T[] = [];
+  private readonly heapComplianceComparator: Comparator<T>;
 
-  constructor(maxHeap?: boolean, comparator?: Comparator<T>) {
-    if (comparator) {
-      this.comparator = comparator;
+  constructor(params?: { maxHeap?: boolean; comparator?: Comparator<T> }) {
+    if (params?.comparator) {
+      this.heapComplianceComparator = params.comparator;
       return;
     }
 
-    this.comparator = maxHeap ? this.maxComparator : this.minComparator;
+    this.heapComplianceComparator = params?.maxHeap
+      ? this.maxComparator
+      : this.minComparator;
   }
 
   add(ele: T) {
-    // push to pqueue
     this.heap.push(ele);
     this.bubbleUp();
   }
@@ -44,11 +45,59 @@ export default class PriorityQueue<T> {
   }
 
   private bubbleUp() {
-    // todo
+    let eleId = this.size - 1;
+    while (eleId > 0) {
+      const parentId = this.getParentId(eleId) as number;
+      const eleVal = this.heap[eleId] as T,
+        parentVal = this.heap[parentId] as T;
+      if (this.heapComplianceComparator(parentVal, eleVal)) {
+        break;
+      }
+
+      this.heap[eleId] = parentVal;
+      this.heap[parentId] = eleVal;
+      eleId = parentId;
+    }
   }
 
   private bubbleDown() {
-    // todo
+    let eleId = 0; // start from root node, then bubble down
+    const lastId = this.size - 1;
+    while (eleId < lastId) {
+      const { leftChildId, rightChildId } = this.getChildrenIds(eleId);
+
+      if (leftChildId === undefined) {
+        // if no left child exists that means its a leaf node, no further down possible. Heap property satisfied.
+        break;
+      }
+      const eleVal = this.heap[eleId] as T;
+      const leftChildVal = this.heap[leftChildId] as T;
+
+      let swapId: number | undefined;
+      if (this.heapComplianceComparator(leftChildVal, eleVal)) {
+        swapId = leftChildId;
+      }
+
+      if (rightChildId) {
+        const rightChildVal = this.heap[rightChildId] as T;
+        if (
+          this.heapComplianceComparator(rightChildVal, eleVal) &&
+          this.heapComplianceComparator(rightChildVal, leftChildVal)
+        ) {
+          swapId = rightChildId;
+        }
+      }
+
+      if (!swapId) {
+        // no swap required means, heap property satisfied. Break
+        break;
+      }
+
+      const swapVal = this.heap[swapId] as T;
+      this.heap[swapId] = eleVal;
+      this.heap[eleId] = swapVal;
+      eleId = swapId;
+    }
   }
 
   private minComparator(parentVal: T, childVal: T): boolean {
@@ -68,15 +117,15 @@ export default class PriorityQueue<T> {
   }
 
   private getChildrenIds(id: number): {
-    left: number | undefined;
-    right: number | undefined;
+    leftChildId: number | undefined;
+    rightChildId: number | undefined;
   } {
     const left = id * 2 + 1;
     const right = left + 1;
 
     return {
-      left: this.size > left ? left : undefined,
-      right: this.size > right ? right : undefined,
+      leftChildId: this.size > left ? left : undefined,
+      rightChildId: this.size > right ? right : undefined,
     };
   }
 }
