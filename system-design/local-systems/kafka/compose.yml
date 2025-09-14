@@ -1,0 +1,14 @@
+services:
+  zookeeper:
+    image: "bitnami/zookeeper:latest"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: "bitnami/kafka:latest"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_PROCESS_ROLES=
+    ports:
+      - "9092:9092"
