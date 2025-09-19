@@ -8,3 +8,4 @@ This is a collection of Javascript data structures
 |----|------|-----|
 |Deque|Stack & Queue| `./src/deque/deque.ts`|
 |Heap|Priority Queue| `./src/priority_queue/priority_queue.ts`|
+|UnionFind|Disjointed Set Union| `./src/union-find/union-find.ts`|
