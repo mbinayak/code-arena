@@ -12,4 +12,12 @@ describe("Incresing Triplet", () => {
   test("Test case 3", () => {
     expect(increasingTriplet([2, 1, 5, 0, 4, 6])).toBe(true);
   });
+
+  test("Test case 3", () => {
+    expect(increasingTriplet([2, 1, 5, 0, 7, 4, 6])).toBe(true);
+  });
+
+  test("Test case 3", () => {
+    expect(increasingTriplet([20, 100, 10, 12, 5, 13])).toBe(true);
+  });
 });
